@@ -115,7 +115,7 @@ python main.py --vm <vm_name> --action <action> [--options]
   
   To launch the tool in GUI mode, use:
   ```bash
-  python main.py --gui
+  python main.py --vm <vm_name> --action gui
   ```
 
 <h3>Running the Tool</h3>

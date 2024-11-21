@@ -10,10 +10,10 @@ class VMICore:
         :param username: (Optional) Username for remote machine authentication.
         :param password: (Optional) Password for remote machine authentication.
         """
-        self.vm_name = "Ubuntu"
+        self.vm_name = vm_name
         self.remote_host = remote_host
-        self.username = "Ubuntu"
-        self.password = "masu@05"
+        self.username = username
+        self.password = password
         self.session = None
     
     def connect(self):
@@ -21,21 +21,18 @@ class VMICore:
         Connect to the local or remote machine.
         """
         if self.remote_host:
-            # Establish WinRM session for remote VM monitoring
-            self.session = winrm.Session(self.remote_host, auth=(self.username, self.password))
-            print(f"Connected to remote VM: {self.remote_host}")
-        else:
-            print(f"Connected to local VM: {self.vm_name}")
-    
+                # Establish WinRM session for remote VM monitoring
+                self.session = winrm.Session(self.remote_host, auth=(self.username, self.password))
+        self.connected = True
+            
     def disconnect(self):
-        """
+        """sel
         Disconnect from the remote or local machine.
         """
         if self.session:
-            print(f"Disconnected from remote VM: {self.remote_host}")
-        else:
-            print(f"Disconnected from local VM: {self.vm_name}")
-
+                self.session.close()
+        self.connected = False
+            
     def get_vm_info(self):
         """
         Retrieve system information for the local or remote VM.

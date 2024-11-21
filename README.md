@@ -19,11 +19,9 @@ This project provides a comprehensive Virtual Machine Introspection (VMI) tool, 
 
 •	Snapshot Management: Take snapshots of the VM and restore them if needed.<br>
 
-•	Logging: Log all activity for auditing purposes.<br>
-
 •	Malware Analysis: Scan files and directories for malware using ClamAV.<br>
 
-•	GUI and CLI Interface: Use either a command-line interface or a graphical user interface for interaction.<br>
+•	GUI Interface: Use a graphical user interface for interaction.<br>
 
 
 <h2>Project Structure</h2>
@@ -37,8 +35,6 @@ vmi_tool/
 │   └── cpu.py
 ├── file_system_monitoring/
 │   └── filesystem.py
-├── logging/
-│   └── logger.py
 ├── malware_analysis/
 │   └── malware_analysis.py
 ├── memory_analysis/
@@ -53,8 +49,6 @@ vmi_tool/
 │   └── core.py
 ├── gui_interface/
 │   └── gui.py
-├── cli_interface/
-│   └── cli.py
 ├── utils/
 │   └── utils.py
 ├── main.py
@@ -117,8 +111,6 @@ python main.py --vm <vm_name> --action <action> [--options]
   ```bash
   python main.py --vm <vm_name> --action malware-analysis --directory <directory_path>
   ```
-- Command Line Interface (CLI):
-  
   Run the tool with various actions using the following commands: 
   ```bash
   python main.py --vm <vm_name> --action <action> [--options]
@@ -142,11 +134,10 @@ We can incorporate malware analysis capabilities into this project to detect, an
 
 <h2>License</h2>
 
-This project is licensed under the MIT . See the <a href="https://github.com/Khyati-33/Virtual-Machine-Inspecter/blob/main/LICENSE">LICENSE</a> file for more details.
+This project is licensed under the MIT . See the <a href="https://github.com/mfatima05/VMI-Tool-Final/blob/main/Virtual-Machine-Inspecter/LICENSE">LICENSE</a> file for more details.
 
 <h2>Contact</h2>
 For any questions or issues, please contact:
 
-**Khyati Sharma** - \[ https://github.com/Khyati-33 ] <br>
 **Maseera Fatima** - \[https://github.com/mfatima05]
 

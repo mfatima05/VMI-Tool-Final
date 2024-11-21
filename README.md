@@ -111,10 +111,6 @@ python main.py --vm <vm_name> --action <action> [--options]
   ```bash
   python main.py --vm <vm_name> --action malware-analysis --directory <directory_path>
   ```
-  Run the tool with various actions using the following commands: 
-  ```bash
-  python main.py --vm <vm_name> --action <action> [--options]
-  ```
 - Graphical User Interface (GUI):
   
   To launch the tool in GUI mode, use:

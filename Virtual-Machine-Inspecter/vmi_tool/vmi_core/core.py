@@ -1,5 +1,5 @@
 import psutil
-import winrm
+import paramiko
 
 class VMICore:
     def __init__(self, vm_name, remote_host=None, username=None, password=None):
@@ -14,34 +14,42 @@ class VMICore:
         self.remote_host = remote_host
         self.username = username
         self.password = password
-        self.session = None
+        self.ssh_client = None
     
     def connect(self):
         """
         Connect to the local or remote machine.
         """
         if self.remote_host:
-                # Establish WinRM session for remote VM monitoring
-                self.session = winrm.Session(self.remote_host, auth=(self.username, self.password))
-        self.connected = True
-            
+            # Establish SSH connection for remote VM monitoring
+            self.ssh_client = paramiko.SSHClient()
+            self.ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            try:
+                self.ssh_client.connect(self.remote_host, username=self.username, password=self.password)
+                self.connected = True
+            except Exception as e:
+                print(f"Failed to connect to {self.remote_host}: {e}")
+                self.connected = False
+        else:
+            self.connected = True
+    
     def disconnect(self):
-        """sel
+        """
         Disconnect from the remote or local machine.
         """
-        if self.session:
-                self.session.close()
+        if self.ssh_client:
+            self.ssh_client.close()
         self.connected = False
-            
+    
     def get_vm_info(self):
         """
         Retrieve system information for the local or remote VM.
         :return: Dictionary with VM info.
         """
         if self.remote_host:
-            command = "systeminfo"
-            result = self.session.run_cmd(command)
-            return result.std_out.decode()
+            command = "uname -a"  # Example command to get basic system info
+            stdin, stdout, stderr = self.ssh_client.exec_command(command)
+            return stdout.read().decode()
         else:
             # Get system information using psutil for local VM
             vm_info = {
@@ -70,7 +78,7 @@ class VMICore:
         Placeholder for starting a VM.
         """
         print(f"Start VM functionality is not supported for local machines using psutil.")
-
+    
     def stop_vm(self):
         """
         Placeholder for stopping a VM.
@@ -79,14 +87,15 @@ class VMICore:
     
     def reboot_vm(self):
         """
-        Reboot the remote VM via WinRM.
+        Reboot the remote VM via SSH.
         """
         if self.remote_host:
-            command = "shutdown /r /t 0"
-            result = self.session.run_cmd(command)
-            if result.status_code == 0:
-                print(f"Remote VM {self.remote_host} is rebooting.")
+            command = "sudo reboot"
+            stdin, stdout, stderr = self.ssh_client.exec_command(command)
+            if stderr.read():
+                print(f"Failed to reboot the remote VM. Error: {stderr.read().decode()}")
             else:
-                print(f"Failed to reboot the remote VM. Error: {result.std_err.decode()}")
+                print(f"Remote VM {self.remote_host} is rebooting.")
         else:
             print("Reboot functionality is not supported for local machines.")
+

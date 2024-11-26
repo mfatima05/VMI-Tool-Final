@@ -1,6 +1,5 @@
 from vmi_core.core import VMICore
-connector = VMICore("Ubuntu")  # Replace with actual VM name
-connector.connect()
+
 
 from memory_analysis.memory import MemoryAnalysis
 from network_monitoring.network import NetworkMonitoring
@@ -10,7 +9,6 @@ from file_system_monitoring.filesystem import FileSystemMonitoring
 from cpu_monitoring.cpu import CPUMonitoring
 from anomaly_detection.anomaly import AnomalyDetection
 from snapshot_manager.snapshot import SnapshotManager
-from alerts.alert import Alerts
 from gui_dashboard.gui import GUIInterface
 from help.help import Help
 import argparse
@@ -18,7 +16,7 @@ import time
 import tkinter as tk
 import pyclamd
 import scapy 
-import json
+import json 
 
 
 def print_intro():
@@ -32,25 +30,37 @@ def print_intro():
     """)
 
 def main():
-     # Print intro text
-    print_intro()
-    # Parse command-line arguments
-    parser = argparse.ArgumentParser(
+   # Print intro text
+  print_intro()
+  # Parse command-line arguments
+  parser = argparse.ArgumentParser(
         description="Virtual Machine Introspection (VMI) Tool - Developed by Khyati and Maseera."
-    )
-    parser = argparse.ArgumentParser(description="Virtual Machine Introspection (VMI) Tool")
-    parser.add_argument('--vm', type=str, required=True, help='Name of the virtual machine.')
-    parser.add_argument('--action', type=str, required=True, choices=['help','info', 'reboot', 'memory', 'network', 'process', 'filesystem', 'cpu', 'anomaly', 'snapshot','alerts', 'gui', 'malware-analysis'], help='Action to perform on the virtual machine.')
-    parser.add_argument('--remote', type=str, help='IP or hostname for the remote VM.')
-    parser.add_argument('--snapshot', type=str, help='Snapshot name for restore action. (Only required if action is "snapshot" and sub-action is restore)')
-    parser.add_argument('--user', type=str, help='Username for the remote VM.')
-    parser.add_argument('--password', type=str, help='Password for the remote VM.')
-    parser.add_argument('--pid', type=int, help='Process ID for detailed process information.')
-    parser.add_argument('--path', type=str, default='.', help='Path for file system monitoring (default is current directory).')
-    parser.add_argument('--visualize', type=str, choices=['usage', 'core', 'temperature'], help='Type of visualization for CPU monitoring.')
-    args = parser.parse_args()
+  )
+  parser = argparse.ArgumentParser(description="Virtual Machine Introspection (VMI) Tool")
+  parser.add_argument('--vm', type=str, required=True, help='Name of the virtual machine.')
+  parser.add_argument('--action', type=str, required=True, choices=['help','info', 'reboot', 'memory', 'network', 'process', 'filesystem', 'cpu', 'anomaly', 'snapshot','alerts', 'gui', 'malware-analysis'], help='Action to perform on the virtual machine.')
+  parser.add_argument('--remote', type=str, help='IP or hostname for the remote VM.')
+  parser.add_argument('--snapshot', type=str, help='Snapshot name for restore action. (Only required if action is "snapshot" and sub-action is restore)')
+  parser.add_argument('--user', type=str, help='Username for the remote VM.')
+  parser.add_argument('--password', type=str, help='Password for the remote VM.')
+  parser.add_argument('--pid', type=int, help='Process ID for detailed process information.')
+  parser.add_argument('--path', type=str, default='.', help='Path for file system monitoring (default is current directory).')
+  parser.add_argument('--visualize', type=str, choices=['usage', 'core', 'temperature'], help='Type of visualization for CPU monitoring.')
+  args = parser.parse_args()
+    
+  vmi = VMICore(args.vm, remote_host=args.remote, username=args.user, password=args.password)
 
-    if args.action == 'memory':
+  try:
+    vmi.connect()
+    if args.action == 'info':
+        info = vmi.get_vm_info()
+        print("\nVM Information:")
+        print(json.dumps(info, indent=4))
+
+    elif args.action == 'reboot':
+        vmi.reboot_vm()
+
+    elif args.action == 'memory':
         # Perform memory analysis
         mem_analysis = MemoryAnalysis()
         
@@ -216,17 +226,6 @@ def main():
      print("\nFile Integrity Status:")
      print(json.dumps(file_integrity, indent=4))
 
-
-    elif args.action == 'kernel':
-        kernel_integrity = KernelIntegrity('path_to_kernel_file')
-        print(kernel_integrity.check_integrity('known_checksum'))
-
-
-    elif args.action == 'alerts':
-        alert_manager = Alerts()
-        alert_manager.send_alert('recipient@example.com', 'Test Alert', 'This is a test alert.')
-
-
     elif args.action == 'gui':
         root = tk.Tk()
         app = GUIInterface(root)
@@ -237,17 +236,14 @@ def main():
         help_text = Help()
         help_text.show_help()
        
+  except Exception as e:
+    print(f"An error occured: {e}")
 
-    else:
-        vmi = VMICore(args.vm, remote_host=args.remote, username=args.user, password=args.password)
-        vmi.connect()
-        if args.action == 'info':
-            info = vmi.get_vm_info()
-        elif args.action == 'reboot':
-            vmi.reboot_vm()
+  finally:
         vmi.disconnect()
 
 if __name__ == "__main__":
     main()
 
-connector.disconnect()
+
+
